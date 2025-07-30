@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { fetchNoteById } from '@/lib/api';
 import css from './NoteDetails.module.css';
-import Loader from '@/loading';
+import Loader from '@/app/loading';
 import Error from './error';
 
 export default function NoteDetailsClient() {
@@ -20,7 +20,6 @@ export default function NoteDetailsClient() {
   } = useQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
-    // staleTime: 0,
     refetchOnMount: 'always',
   });
   if (isLoading || isFetching) return <Loader />;
