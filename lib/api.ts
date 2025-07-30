@@ -34,6 +34,15 @@ export const fetchNotes = async (
   return result.data;
 };
 
+export const fetchNoteById = async (id: string): Promise<Note> => {
+  const response = await axios.get<Note>(`/notes/${id}`, {
+    headers: {
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+    },
+  });
+  return response.data;
+};
+
 export const createNote = async (noteData: NewNoteData): Promise<Note> => {
   const result = await axios.post<Note>('/notes', noteData, {
     headers: {

@@ -38,7 +38,7 @@ export default function NotesClient() {
 
   return (
     <div className={css.app}>
-      <header className={css.toolbar}>
+      <div className={css.toolbar}>
         <SearchBox value={inputValue} onSearch={setInputValue} />
 
         {data && data.totalPages > 1 && (
@@ -52,7 +52,7 @@ export default function NotesClient() {
         <button className={css.button} onClick={openModal}>
           Create note +
         </button>
-      </header>
+      </div>
 
       {isLoading && <Loading />}
       {!isLoading && data?.notes && data.notes.length > 0 && (

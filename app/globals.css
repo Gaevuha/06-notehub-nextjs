@@ -8,3 +8,17 @@ body {
   margin: 0;
   background-color: #f8f9fa;
 }
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error {
+  margin: 0 auto;
+}
+
+.loader {
+  margin: 0 auto;
+}

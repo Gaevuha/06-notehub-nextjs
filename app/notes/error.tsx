@@ -13,8 +13,8 @@ export default function Error({ error }: Props) {
   const errorMessage = isError(error) ? error.message : 'Unknown error';
 
   return (
-    <div>
-      <p>Could not fetch the list of notes. {errorMessage}</p>
+    <div className="center">
+      <p className="error">Could not fetch the list of notes. {errorMessage}</p>
     </div>
   );
 }
