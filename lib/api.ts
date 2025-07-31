@@ -51,6 +51,7 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
         Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
     });
+
     return response.data;
   } catch (error: unknown) {
     if (
