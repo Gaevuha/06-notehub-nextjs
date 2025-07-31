@@ -1,3 +1,4 @@
+// types/note.ts
 export interface Note {
   id: string;
   title: string;
@@ -11,4 +12,10 @@ export interface NewNoteData {
   title: string;
   content: string;
   tag: string;
+}
+
+export interface fetchNotesProps {
+  notes: Note[];
+  totalPages: number;
+  totalNotes?: number;
 }

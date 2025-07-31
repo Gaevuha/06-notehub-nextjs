@@ -24,39 +24,84 @@ export const fetchNotes = async (
     params.search = query;
   }
 
-  const result = await axios.get<fetchNotesProps>('/notes', {
-    params,
-    headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
-    },
-  });
+  try {
+    const result = await axios.get<fetchNotesProps>('/notes', {
+      params,
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    });
 
-  return result.data;
+    return result.data;
+  } catch (error: unknown) {
+    if (
+      axios.isAxiosError(error) &&
+      (error.code === 'ENOTFOUND' || error.message === 'Network Error')
+    ) {
+      throw new Error('Network Error');
+    }
+    throw error;
+  }
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
-  const response = await axios.get<Note>(`/notes/${id}`, {
-    headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
-    },
-  });
-  return response.data;
+  console.log(
+    'FETCHINGById from:',
+    typeof window === 'undefined' ? 'SERVER' : 'CLIENT',
+  );
+
+  try {
+    const response = await axios.get<Note>(`/notes/${id}`, {
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (
+      axios.isAxiosError(error) &&
+      (error.code === 'ENOTFOUND' || error.message === 'Network Error')
+    ) {
+      throw new Error('Network Error');
+    }
+    throw error;
+  }
 };
 
 export const createNote = async (noteData: NewNoteData): Promise<Note> => {
-  const result = await axios.post<Note>('/notes', noteData, {
-    headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
-    },
-  });
-  return result.data;
+  try {
+    const result = await axios.post<Note>('/notes', noteData, {
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    });
+    return result.data;
+  } catch (error: unknown) {
+    if (
+      axios.isAxiosError(error) &&
+      (error.code === 'ENOTFOUND' || error.message === 'Network Error')
+    ) {
+      throw new Error('Network Error');
+    }
+    throw error;
+  }
 };
 
 export const deleteNote = async (noteId: string | number): Promise<Note> => {
-  const result = await axios.delete<Note>(`/notes/${noteId}`, {
-    headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
-    },
-  });
-  return result.data;
+  try {
+    const result = await axios.delete<Note>(`/notes/${noteId}`, {
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    });
+    return result.data;
+  } catch (error: unknown) {
+    if (
+      axios.isAxiosError(error) &&
+      (error.code === 'ENOTFOUND' || error.message === 'Network Error')
+    ) {
+      throw new Error('Network Error');
+    }
+    throw error;
+  }
 };

@@ -1,50 +1,62 @@
 'use client';
 
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
-import css from './NotesPage.module.css';
-import { fetchNotes } from '@/lib/api';
-import SearchBox from '@/components/SearchBox/SearchBox';
+import { useRouter } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
+import SearchBox from '@/components/SearchBox/SearchBox';
 import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
 import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
-import Loading from '@/app/loading';
-import Error from '@/app/notes/error';
+import css from './NotesPage.module.css';
+import type { fetchNotesProps } from '@/types/note';
 
-export default function NotesClient() {
-  const [inputValue, setInputValue] = useState('');
-  const [page, setPage] = useState(1);
+interface NotesClientProps {
+  initialData: fetchNotesProps;
+  initialSearchQuery: string;
+  initialPage: number;
+}
+
+export default function NotesClient({
+  initialData,
+  initialSearchQuery,
+  initialPage,
+}: NotesClientProps) {
+  const router = useRouter();
+
+  const [inputValue, setInputValue] = useState(initialSearchQuery);
+  const [page, setPage] = useState(initialPage);
   const [searchQuery] = useDebounce(inputValue, 300);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  // Скидаємо сторінку при зміні пошуку
   useEffect(() => {
     setPage(1);
   }, [searchQuery]);
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['notes', searchQuery, page],
-    queryFn: () => fetchNotes(searchQuery, page),
-    placeholderData: keepPreviousData,
-  });
+  // Коли змінюються search або page — оновлюємо URL, щоб запустити SSR
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set('search', searchQuery);
+    if (page !== 1) params.set('page', page.toString());
 
-  if (error) {
-    return <Error error={error} />;
-  }
+    const url = `/notes?${params.toString()}`;
+    // replace запускає SSR, бо змінюється URL і сторінка перевантажується на сервері
+    router.replace(url, { scroll: false });
+  }, [searchQuery, page, router]);
 
   return (
     <div className={css.app}>
       <div className={css.toolbar}>
         <SearchBox value={inputValue} onSearch={setInputValue} />
 
-        {data && data.totalPages > 1 && (
+        {initialData.totalPages > 1 && (
           <Pagination
             page={page}
-            totalPages={data.totalPages}
+            totalPages={initialData.totalPages}
             onChange={setPage}
           />
         )}
@@ -54,11 +66,8 @@ export default function NotesClient() {
         </button>
       </div>
 
-      {isLoading && <Loading />}
-      {!isLoading && data?.notes && data.notes.length > 0 && (
-        <NoteList notes={data.notes} />
-      )}
-      {isError && <Error error={error} />}
+      {initialData.notes.length > 0 && <NoteList notes={initialData.notes} />}
+
       {isModalOpen && (
         <Modal onClose={closeModal}>
           <NoteForm onCloseModal={closeModal} />

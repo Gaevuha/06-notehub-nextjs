@@ -1,3 +1,6 @@
+// components/NoteList.tsx
+'use client';
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteNote } from '@/lib/api';
 import css from './NoteList.module.css';
@@ -14,6 +17,7 @@ export default function NoteList({ notes }: NoteListProps) {
   const { mutate: deleteNoteById } = useMutation({
     mutationFn: deleteNote,
     onSuccess: () => {
+      // Інвалідовуємо кеш, щоб оновити список нотаток
       queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });

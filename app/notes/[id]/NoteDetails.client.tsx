@@ -7,9 +7,8 @@ import css from './NoteDetails.module.css';
 import Loader from '@/app/loading';
 import Error from './error';
 
-export default function NoteDetailsClient() {
-  const params = useParams();
-  const id = String(params.id);
+const NoteDetailsClient = () => {
+  const { id } = useParams<{ id: string }>();
 
   const {
     data: note,
@@ -20,7 +19,7 @@ export default function NoteDetailsClient() {
   } = useQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
-    refetchOnMount: 'always',
+    // refetchOnMount: false,
   });
   if (isLoading || isFetching) return <Loader />;
   if (isError || !note) return <Error error={error} />;
@@ -36,4 +35,5 @@ export default function NoteDetailsClient() {
       </div>
     </div>
   );
-}
+};
+export default NoteDetailsClient;

@@ -6,13 +6,12 @@ import {
 import { fetchNoteById } from '@/lib/api';
 import NoteDetailsClient from '@/app/notes/[id]/NoteDetails.client';
 
-export default async function NoteDetailsPage({
-  params,
-}: {
+type NoteDetailsPageProps = {
   params: Promise<{ id: string }>;
-}) {
-  const resolvedParams = await params;
-  const id = resolvedParams.id;
+};
+
+const NoteDetailsPage = async ({ params }: NoteDetailsPageProps) => {
+  const { id } = await params;
 
   const queryClient = new QueryClient();
 
@@ -26,4 +25,5 @@ export default async function NoteDetailsPage({
       <NoteDetailsClient />
     </HydrationBoundary>
   );
-}
+};
+export default NoteDetailsPage;
