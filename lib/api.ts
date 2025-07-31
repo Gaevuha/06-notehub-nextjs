@@ -45,11 +45,6 @@ export const fetchNotes = async (
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
-  console.log(
-    'FETCHINGById from:',
-    typeof window === 'undefined' ? 'SERVER' : 'CLIENT',
-  );
-
   try {
     const response = await axios.get<Note>(`/notes/${id}`, {
       headers: {
