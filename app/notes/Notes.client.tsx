@@ -24,16 +24,8 @@ export default function NotesClient({
 }: NotesClientProps) {
   const router = useRouter();
 
-  const [inputValue, setInputValue] = useState('');
-  useEffect(() => {
-    setInputValue(initialSearchQuery);
-  }, [initialSearchQuery]);
-
-  const [page, setPage] = useState(1);
-  useEffect(() => {
-    setPage(initialPage);
-  }, [initialPage]);
-
+  const [inputValue, setInputValue] = useState(initialSearchQuery);
+  const [page, setPage] = useState(initialPage);
   const [searchQuery] = useDebounce(inputValue, 300);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,16 +37,21 @@ export default function NotesClient({
     setPage(1);
   }, [searchQuery]);
 
-  // Коли змінюються search або page — оновлюємо URL, щоб запустити SSR
+  // Оновлюємо URL при зміні пошуку або сторінки
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set('search', searchQuery);
     if (page !== 1) params.set('page', page.toString());
 
     const url = `/notes?${params.toString()}`;
-    // replace запускає SSR, бо змінюється URL і сторінка перевантажується на сервері
     router.replace(url, { scroll: false });
   }, [searchQuery, page, router]);
+
+  // 🆕 Викликається після створення нової нотатки
+  const handleNoteCreated = () => {
+    closeModal();
+    router.refresh(); // або router.replace(...) щоб ініціювати SSR
+  };
 
   return (
     <div className={css.app}>
@@ -78,7 +75,10 @@ export default function NotesClient({
 
       {isModalOpen && (
         <Modal onClose={closeModal}>
-          <NoteForm onCloseModal={closeModal} />
+          <NoteForm
+            onCloseModal={closeModal}
+            onNoteCreated={handleNoteCreated} // ✅ новий проп
+          />
         </Modal>
       )}
     </div>

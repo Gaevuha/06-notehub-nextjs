@@ -7,6 +7,7 @@ import type { NewNoteData } from '../../types/note';
 
 interface NoteFormProps {
   onCloseModal: () => void;
+  onNoteCreated: () => void;
 }
 
 const validationSchema = Yup.object({
@@ -20,7 +21,10 @@ const validationSchema = Yup.object({
     .required('Tag is required'),
 });
 
-export default function NoteForm({ onCloseModal }: NoteFormProps) {
+export default function NoteForm({
+  onCloseModal,
+  onNoteCreated,
+}: NoteFormProps) {
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -28,6 +32,7 @@ export default function NoteForm({ onCloseModal }: NoteFormProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       onCloseModal();
+      onNoteCreated();
     },
   });
 
