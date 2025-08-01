@@ -5,3 +5,9 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+module.exports = {
+  experimental: {
+    optimizeCss: false, // не preload-ить критичний CSS
+  },
+};
