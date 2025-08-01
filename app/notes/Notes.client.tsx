@@ -3,11 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
+import { useQuery } from '@tanstack/react-query';
+
+import { fetchNotes } from '@/lib/api';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
 import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
+
 import css from './NotesPage.module.css';
 import type { fetchNotesProps } from '@/types/note';
 
@@ -47,21 +51,31 @@ export default function NotesClient({
     router.replace(url, { scroll: false });
   }, [searchQuery, page, router]);
 
-  // Викликається після створення нової нотатки
+  // 👉 Завантаження нотаток через React Query
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ['notes', searchQuery, page],
+    queryFn: () => fetchNotes(searchQuery, page),
+    initialData,
+    refetchOnMount: false,
+  });
+
   const handleNoteCreated = () => {
     closeModal();
-    router.refresh();
+    refetch(); // оновлюємо список без перезавантаження
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error: {(error as Error).message}</p>;
 
   return (
     <div className={css.app}>
       <div className={css.toolbar}>
         <SearchBox value={inputValue} onSearch={setInputValue} />
 
-        {initialData.totalPages > 1 && (
+        {data.totalPages > 1 && (
           <Pagination
             page={page}
-            totalPages={initialData.totalPages}
+            totalPages={data.totalPages}
             onChange={setPage}
           />
         )}
@@ -71,13 +85,13 @@ export default function NotesClient({
         </button>
       </div>
 
-      {initialData.notes.length > 0 && <NoteList notes={initialData.notes} />}
+      {data.notes.length > 0 && <NoteList notes={data.notes} />}
 
       {isModalOpen && (
         <Modal onClose={closeModal}>
           <NoteForm
             onCloseModal={closeModal}
-            onNoteCreated={handleNoteCreated} // ✅ новий проп
+            onNoteCreated={handleNoteCreated}
           />
         </Modal>
       )}
