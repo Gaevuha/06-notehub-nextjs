@@ -47,10 +47,10 @@ export default function NotesClient({
     router.replace(url, { scroll: false });
   }, [searchQuery, page, router]);
 
-  // 🆕 Викликається після створення нової нотатки
+  // Викликається після створення нової нотатки
   const handleNoteCreated = () => {
     closeModal();
-    router.refresh(); // або router.replace(...) щоб ініціювати SSR
+    router.refresh();
   };
 
   return (
