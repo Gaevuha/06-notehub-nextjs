@@ -7,9 +7,11 @@ import css from './NoteDetails.module.css';
 import Loader from '@/app/loading';
 import Error from './error';
 
-const NoteDetailsClient = () => {
-  const { id } = useParams<{ id: string }>();
+type NoteDetailsClientProps = {
+  id: string;
+};
 
+const NoteDetailsClient = ({ id }: NoteDetailsClientProps) => {
   const {
     data: note,
     isLoading,
@@ -19,7 +21,6 @@ const NoteDetailsClient = () => {
   } = useQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
-    // refetchOnMount: false,
   });
   if (isLoading || isFetching) return <Loader />;
   if (isError || !note) return <Error error={error} />;

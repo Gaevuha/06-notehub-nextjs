@@ -24,8 +24,16 @@ export default function NotesClient({
 }: NotesClientProps) {
   const router = useRouter();
 
-  const [inputValue, setInputValue] = useState(initialSearchQuery);
-  const [page, setPage] = useState(initialPage);
+  const [inputValue, setInputValue] = useState('');
+  useEffect(() => {
+    setInputValue(initialSearchQuery);
+  }, [initialSearchQuery]);
+
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    setPage(initialPage);
+  }, [initialPage]);
+
   const [searchQuery] = useDebounce(inputValue, 300);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
