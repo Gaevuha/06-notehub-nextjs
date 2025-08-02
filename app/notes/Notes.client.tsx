@@ -36,12 +36,10 @@ export default function NotesClient({
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  // Скидаємо сторінку при зміні пошуку
   useEffect(() => {
     setPage(1);
   }, [searchQuery]);
 
-  // Оновлюємо URL при зміні пошуку або сторінки
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set('search', searchQuery);
@@ -51,7 +49,6 @@ export default function NotesClient({
     router.replace(url, { scroll: false });
   }, [searchQuery, page, router]);
 
-  // 👉 Завантаження нотаток через React Query
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['notes', searchQuery, page],
     queryFn: () => fetchNotes(searchQuery, page),
@@ -61,7 +58,7 @@ export default function NotesClient({
 
   const handleNoteCreated = () => {
     closeModal();
-    refetch(); // оновлюємо список без перезавантаження
+    refetch();
   };
 
   if (isLoading) return <p>Loading...</p>;

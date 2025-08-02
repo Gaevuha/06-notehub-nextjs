@@ -23,7 +23,7 @@ const NoteDetailsClient = ({ id }: NoteDetailsClientProps) => {
     refetchOnMount: false,
   });
   if (isLoading || isFetching) return <Loader />;
-  if (isError || !note) return <Error error={error} />;
+  if (isError || !note) return <Error error={error as Error} />;
 
   return (
     <div className={css.container}>
