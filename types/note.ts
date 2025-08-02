@@ -13,9 +13,3 @@ export interface NewNoteData {
   content: string;
   tag: string;
 }
-
-export interface fetchNotesProps {
-  notes: Note[];
-  totalPages: number;
-  totalNotes?: number;
-}

@@ -13,23 +13,17 @@ import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
 
 import css from './NotesPage.module.css';
-import type { fetchNotesProps } from '@/types/note';
+import fetchNotesProps from '@/lib/api';
 
 interface NotesClientProps {
   initialData: fetchNotesProps;
-  initialSearchQuery: string;
-  initialPage: number;
 }
 
-export default function NotesClient({
-  initialData,
-  initialSearchQuery,
-  initialPage,
-}: NotesClientProps) {
+export default function NotesClient({ initialData }: NotesClientProps) {
   const router = useRouter();
 
-  const [inputValue, setInputValue] = useState(initialSearchQuery);
-  const [page, setPage] = useState(initialPage);
+  const [inputValue, setInputValue] = useState('');
+  const [page, setPage] = useState(1);
   const [searchQuery] = useDebounce(inputValue, 300);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,15 +33,6 @@ export default function NotesClient({
   useEffect(() => {
     setPage(1);
   }, [searchQuery]);
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (searchQuery.trim()) params.set('search', searchQuery);
-    if (page !== 1) params.set('page', page.toString());
-
-    const url = `/notes?${params.toString()}`;
-    router.replace(url, { scroll: false });
-  }, [searchQuery, page, router]);
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['notes', searchQuery, page],
